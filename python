@@ -1,1 +1,146 @@
+def cost():
+    m_cost = int(input("Enter the production cost :£"))
+    while True:
+        band_a = int(input("Enter the cost of Band A : £"))
+        if band_a > 1:
+            band_b = int(band_a / 2)
+            print("Cost of Band A = £", band_a)
+            print("Cost of Band B = £", band_b)
+            break
+        else:
+            print("Entered production cost is not realistic.. Renter it ")
+    return band_a, band_b, m_cost
 
+
+
+def theater():
+    seats = [["Free", "Free", "Free", "Free", "Free"],
+             ["Free", "Free", "Free", "Free", "Free"],
+             ["Free", "Free", "Free", "Free", "Free"], 
+             ["Free", "Free", "Free", "Free", "Free"]] 
+    rows = 4
+    columns =5
+#this function returns the seating arrangements by number of rows and seats
+    return seats,rows, columns
+
+#function for zone a and zone b to set empty seats as free
+def zoneA(seats):
+    rows = 4
+    columns = 5
+    count = 0
+    for j in range(rows):
+        for k in range(columns):
+            if j < 2:
+                if seats[j][k] == "Free":
+                    count = count + 1
+    return count
+
+
+def zoneB(seats):
+    rows = 4
+    columns = 5
+    count = 0
+    for j in range(rows):
+        for k in range(columns):
+            if j >= 2:
+                if seats[j][k] == "Free":
+                    count = count + 1
+    return count
+
+
+def booking(seats, rows, columns):
+    booking_value: str = "Y"
+    print("------------------------------------")
+    print("WELCOME TO BOOKING")
+    print("------------------------------------")
+
+    while booking_value in  ["Y", "y"]:
+        choice = input("Enter number of choice of Zone A or B : ")
+        if choice == "A":
+            a = zoneA(seats)
+            print("Available seats in Zone A: ", a)
+            nos = int(input("Enter of seats needed : "))
+            if nos > a:
+                print("Sorry exceeding the maximum capacity of seats")
+            elif nos <= 0:
+                print("Sorry entered number is invalid")
+            else:
+                for j in range(rows):
+                    for k in range(columns):
+                        if j < 2:
+                            if seats[j][k] == "Free":
+                                if nos > 0:
+                                    seats[j][k] = "Booked"
+                                    nos = nos - 1
+
+        elif choice == "B":
+            b = zoneB(seats)
+            print("Available seats in Zone B: ", b)
+            nos = int(input("Enter of seats needed : "))
+            if nos > b:
+                print("Sorry exceeding the maximum capacity of seats")
+            elif nos <= 0:
+                print("Sorry entered number is invalid")
+            else:
+                for j in range(rows):
+                    for k in range(columns):
+                        if j >= 2:
+                            if seats[j][k] == "Free":
+                                if nos > 0:
+                                    seats[j][k] = "Booked"
+                                    nos = nos - 1
+        booking_value: str = input("\n Do you want to book more seats (Y/N): ")
+
+        if booking_value not in ["Y", "y"]:
+            booking_value = "N"
+
+    return seats
+
+#function to show the seating arrangements
+def printseats(seats,rows, columns):
+    
+    full = 20
+    A = 0
+    B = 0
+    print("\n\n===============STAGE===========================VIEW==============")
+    for j in range(rows):
+        if j < 2:
+            print("Zone A - ", seats[j])
+        else:
+            print("Zone B - ", seats[j])
+        for k in range(columns):
+            if seats[j][k] == "Booked":
+                full = full - 1
+                if j < 2:
+                    A = A + 1
+                else:
+                    B = B + 1
+    print("==================================================================\n\n")
+    return full, A, B
+
+# calling out functions 
+def main():
+    band_a, band_b, m_cost = cost()
+    seats, rows, columns = theater()
+    seats = booking(seats,rows, columns)
+    full, A, B = printseats(seats, rows, columns)
+    
+
+    print("===============BREAK-EVEN==========================")
+    if full < 20:
+        if full == 0:
+            print("It is a full house ---- ", A, " seats * £",band_a, " per seat  and", B, " seats * £",band_b, "per seat")
+            rev = int((A * band_a) + (B * band_b))
+            print("Revenue for total Full-House : £",rev)
+            print("Number of total shows to break-even = ", round(m_cost / rev), " shows")
+        else:
+            print("Part house ----- ", A, " seats * £",band_a, " per seat and", B, " seats * £",band_b, "per seat")
+            rev = int((A * band_a) + (B * band_b))
+            print("Revenue for part house : £",rev)
+            print("Number of total shows  needed to break-even = ", round(m_cost / rev), " shows")
+    else:
+        print("no tickets booked ----")
+
+        print("==================================================")
+
+main()
